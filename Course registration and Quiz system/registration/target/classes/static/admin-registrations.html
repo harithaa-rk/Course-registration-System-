@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Registrations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>All Registrations</h1>
+    <div id="error" class="error"></div>
+    <table id="registrationsTable">
+      <thead>
+        <tr>
+          <th>Registration ID</th>
+          <th>Course Name</th>
+          <th>User Name</th>
+          <th>Registration Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be dynamically injected here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:8080/api/admin/registrations')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch registrations');
+          }
+          return response.json();
+        })
+        .then(data => {
+            const value = data?.data.slice(0, -1)
+            console.log("value", value)
+          const tableBody = document.querySelector('#registrationsTable tbody');
+          if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+            data.data.forEach(registration => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${registration.id}</td>
+                <td>${registration.courseName || 'N/A'}</td>
+                <td>${registration.userName || 'N/A'}</td>
+                <td>${new Date(registration.registrationDate).toLocaleString()  || 'N/A'}</td>
+              `;
+              tableBody.appendChild(row);
+            });
+          } else {
+            document.getElementById('error').textContent = 'No registrations found.';
+          }
+        })
+        .catch(error => {
+          document.getElementById('error').textContent = `Error: ${error.message}`;
+        });
+    });
+  </script>
+</body>
+</html>

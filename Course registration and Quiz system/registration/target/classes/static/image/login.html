@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(120deg, #2980b9 0%, #6dd5fa 100%);
+        }
+        .container {
+            text-align: center;
+            padding: 32px 24px 24px 24px;
+            width: 340px;
+            border: none;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+            position: relative;
+            animation: fadeIn 0.8s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        h2 {
+            margin-bottom: 18px;
+            color: #2980b9;
+            letter-spacing: 1px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 0.98rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            border: 1px solid #b2bec3;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus {
+            border: 1.5px solid #2980b9;
+            outline: none;
+            background: #eaf6fb;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 18px; /* add space between both buttons */
+        }
+        button, a {
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+        }
+        button {
+            background: linear-gradient(90deg, #2980b9 60%, #6dd5fa 100%);
+        }
+        a {
+            background-color: #008CBA;
+        }
+        a:hover, button:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
+        }
+        .role-select {
+            margin-bottom: 18px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-icon {
+            position: absolute;
+            left: 10px;
+            top: 38px;
+            color: #2980b9;
+            font-size: 1.1rem;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        /* Responsive */
+        @media (max-width: 400px) {
+            .container { width: 98vw; padding: 12px; }
+            button, a { font-size: 0.95rem; padding: 8px 10px; }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fa fa-sign-in-alt"></i> Login</h2>
+        <div class="form-group role-select">
+            <label for="role"><i class="fa fa-user-tag"></i> Select Role:</label>
+            <select id="role" name="role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <form id="loginForm">
+            <div class="form-group input-wrapper">
+                <label for="username"><i class="fa fa-user"></i> Username:</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="form-group input-wrapper">
+                <label for="password"><i class="fa fa-lock"></i> Password:</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit"><i class="fa fa-arrow-right-to-bracket"></i> Login</button>
+        </form>
+        <div class="buttons">
+            <a href="create-account.html"><i class="fa fa-user-plus"></i> Create Account</a>
+            <a href="forgot-password.html"><i class="fa fa-key"></i> Forgot Password?</a>
+        </div>
+    </div>
+    <script>
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const role = document.getElementById('role').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            let url = '';
+
+            // Set URL based on role
+            if (role === 'user') {
+                url = 'http://localhost:8080/api/user/login';
+            } else if (role === 'admin') {
+                url = 'http://localhost:8080/api/admin/login';
+            }
+
+            // Send login request
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200) {
+                    alert(`${role.charAt(0).toUpperCase() + role.slice(1)} login successful`);
+                    console.log(body);
+                    if (role === 'user') {
+                        localStorage.setItem('userId', body.userId);
+                        localStorage.setItem('username', body.username);
+                        window.location.href = '/registration/src/main/resources/static/image/available-courses.html';
+                    } else if (role === 'admin') {
+                        localStorage.setItem('adminId', body.adminId);
+                        localStorage.setItem('username', body.username);
+                        window.location.href = '/registration/src/main/resources/static/admin-registrations.html';
+                    }
+                } else {
+                    alert(body.message || 'Invalid credentials');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                alert('Error logging in');
+            });
+        });
+    </script>
+</body>
+</html>

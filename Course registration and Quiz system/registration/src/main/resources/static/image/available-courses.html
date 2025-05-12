@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Available Courses</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .container {
+      padding-top: 60px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      font-size: 2.8rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .course-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
+     
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 240px;
+      text-align: center;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      margin: 15px 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .card button {
+      margin-bottom: 15px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    .button-bar {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      z-index: 10;
+      display: flex;
+      gap: 16px;
+    }
+
+    .top-right-btn {
+      position: static;
+      margin-left: 0;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .top-right-btn:hover {
+      background: #0056b3;
+    }
+
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      min-width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #888;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="button-bar">
+    <button class="top-right-btn" onclick="logout()">Logout</button>
+    <button class="top-right-btn" onclick="showRegistrations()">My Registrations</button>
+  </div>
+  <div class="modal-bg" id="registrationModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2>My Registered Courses</h2>
+      <div id="registrationTableContainer">
+        <!-- Table will be injected here -->
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Available Courses</h1>
+    <div class="course-grid">
+      <div class="card">
+        <img src="https://miro.medium.com/v2/resize:fit:1200/1*uXkvq_VxkoNFexUGR6c2vQ.jpeg" alt="Java Programming">
+        <h3>Java Programming</h3>
+        <button onclick="goToRegister(1, 'Java Programming')">Register</button>
+      </div>
+      <div class="card">
+        <img src="https://t3.ftcdn.net/jpg/02/14/87/96/360_F_214879686_R3HFJlk6WLr1kcdvy6Q9rtNASKN0BZBS.jpg" alt="Web Development">
+        <h3>Web Development</h3>
+        <button onclick="goToRegister(2, 'Web Development')">Register</button>
+      </div>
+      <div class="card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9XFEQ3WfA2SL4RCiTu6-QFUzIK5KXStkUGQ&s" alt="Data Structures">
+        <h3>Data Structures</h3>
+        <button onclick="goToRegister(3, 'Data Structures')">Register</button>
+      </div>
+      <div class="card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8xnb36vjXaY5IEHY_yGFpAjd5EF5Ofx3aPQ&s" alt="Database Management System">
+        <h3>Database Management System</h3>
+        <button onclick="goToRegister(4, 'Database Management System')">Register</button>
+      </div>
+      <div class="card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw3zS4mTlodewTV4s_eJ88i2wDrQiK10p63g&s" alt="Operating System">
+        <h3>Operating System</h3>
+        <button onclick="goToRegister(5, 'Operating System')">Register</button>
+      </div>
+      <div class="card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQe65GbsBRidJHZiyAEoemjVpTrwabYKkZ1Rg&s" alt="Cyber Security">
+        <h3>Cyber Security</h3>
+        <button onclick="goToRegister(6, 'Cyber Security')">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "/registration/src/main/resources/static/image/login.html";
+    }
+
+    function goToRegister(courseId, courseName) {
+      const url = `register-course.html?courseId=${courseId}&courseName=${encodeURIComponent(courseName)}`;
+      window.location.href = url;
+    }
+
+    function showRegistrations() {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        alert('Please login to view your registrations.');
+        return;
+      }
+      fetch(`http://localhost:8080/api/user/${userId}/registrations`)
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(response => {
+          console.log("response", response);
+          let html = '';
+          if (response.length > 0) {
+            html += `<table>
+              <tr>
+                <th>Course Name</th>
+                <th>Description</th>
+                <th>Duration</th>
+                <th>Fee</th>
+                <th>Registered On</th>
+              </tr>`;
+            response.forEach(reg => {
+              html += `<tr>
+                <td>${reg.course && reg.courseName ? reg.courseName : ''}</td>
+                <td>${reg.course && reg.course.description ? reg.course.description : ''}</td>
+                <td>${reg.course && reg.course.duration ? reg.course.duration : ''}</td>
+                <td>${reg.course && reg.course.fee ? reg.course.fee : ''}</td>
+                <td>${reg.registrationDate ? new Date(reg.registrationDate).toLocaleString() : 'N/A'}</td>
+
+              </tr>`;
+            });
+            html += `</table>`;
+          } else {
+            html = '<p>No registrations found.</p>';
+          }
+          document.getElementById('registrationTableContainer').innerHTML = html;
+          document.getElementById('registrationModal').style.display = 'flex';
+        })
+        .catch((err) => {
+          console.error('Error fetching registrations:', err);
+          document.getElementById('registrationTableContainer').innerHTML = '<p>Error loading registrations. Please try again later.</p>';
+          document.getElementById('registrationModal').style.display = 'flex';
+        });
+    }
+    function closeModal() {
+      document.getElementById('registrationModal').style.display = 'none';
+    }
+    // Optional: Close modal on background click
+    document.getElementById('registrationModal').onclick = function(e) {
+      if (e.target === this) closeModal();
+    }
+  </script>
+</body>
+</html>

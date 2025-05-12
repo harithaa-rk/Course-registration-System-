@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register for Course</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f1f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input[readonly] {
+      background-color: #eee;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .success-message {
+      text-align: center;
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Register for Course</h2>
+    <form id="registrationForm">
+      <label>Course Name:</label>
+      <input type="text" id="courseName" readonly>
+
+      <label>Username:</label>
+      <input type="text" id="username" required>
+
+      <label>Email:</label>
+      <input type="email" id="email" required>
+
+      <input type="hidden" id="courseId">
+
+      <button type="submit">Submit Registration</button>
+    </form>
+    <div class="success-message" id="message"></div>
+  </div>
+
+  <script>
+    // Populate course info from URL
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById("courseName").value = params.get("courseName") || "";
+    document.getElementById("courseId").value = params.get("courseId") || "";
+
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const courseId = document.getElementById("courseId").value;
+      const courseName = document.getElementById("courseName").value;
+
+      // Get logged-in userId from localStorage
+      const userId = localStorage.getItem('userId');
+
+      // Build registration payload
+      const registrationData = {
+        studentName: username,
+        studentEmail: email,
+        course: { id: parseInt(courseId) },
+        registrationDate: new Date().toISOString(),
+        courseName: courseName
+      };
+
+      // If userId exists, add user object to payload
+      if (userId) {
+        registrationData.user = { id: parseInt(userId) };
+      }
+
+      fetch('http://localhost:8080/api/courses/register', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(registrationData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => { throw new Error(err.message || 'Registration failed'); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById("message").textContent = "Registration successful!";
+        document.getElementById("registrationForm").reset();
+        window.location.href = 'http://127.0.0.1:5500/registration/src/main/resources/static/image/available-courses.html';
+      })
+      .catch((error) => {
+        document.getElementById("message").textContent = error.message;
+        console.error('Error:', error);
+      });
+    });
+  </script>
+
+</body>
+</html>
